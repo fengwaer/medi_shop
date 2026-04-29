@@ -41,6 +41,6 @@
     "mysql": "^2.18.1",
     "sass-embedded": "^1.99.0",
     "scss": "^0.2.4",
-    "vue-router": "^4.6.4"
+    "vue-router": "^5.0.6"
   }
 }
