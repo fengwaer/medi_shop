@@ -1,3 +1,4 @@
+<!-- 零售 -->
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 // --- 注入：引入你的组件 ---
@@ -48,11 +49,10 @@ const handlePrint = () => { win_print.value = 1; }; // 改为打开窗口
 const close_win=()=>{ win_goods.value=0;win_print.value=0;}//关闭所有窗口
 
 const handleKeyDown = (e: KeyboardEvent) => {
-  console.log(e.key)
   if (e.key.startsWith('F')) e.preventDefault();
   switch (e.key) {
     case 'F1': handleReceipt(); break;
-    case 'F3': handlePrint(); break;
+    case 'F6': handlePrint(); break;
     case 'Escape': close_win();break;
     case 'Enter': 
       if (document.activeElement === saleInputRef.value && searchKey.value != '') {
@@ -85,15 +85,15 @@ onUnmounted(() => {
       <div class="shortcut_group">
         <button class="bt1" @click="handleReceipt">[F1] 收款</button>
         
-        <button class="bt1">[F5] 议价</button>
-        <button class="bt1">[F6] 拆零</button>
+        <button class="bt1">[F2] 议价</button>
+        <button class="bt1">[F3] 拆零</button>
+        <button class="bt1">[G] 挂单</button>
+        <button class="bt1">[Alt+G] 挂单提取</button>
+        <button class="bt1">单据查询</button>
+        <div class="divider"></div>
+        <button class="bt1" @click="handlePrint">[F6] 打印设置</button>
         <button class="bt1 danger">[Alt+T] 整单退货</button>
         <button class="bt1 danger">[Del] 删除</button>
-        <div class="divider"></div>
-        <button class="bt1">[G] 挂单</button>
-        <button class="bt1">[Q] 挂单提取</button>
-        <button class="bt1">单据查询</button>
-        <button class="bt1" @click="handlePrint">[F3] 打印设置</button>
       </div>
       <div class="sys_info">预留</div>
     </header>

@@ -1,7 +1,6 @@
+<!-- 人员管理 -->
 <script setup lang="ts">
 import { ref } from 'vue'
-import print from '../components/print.vue'
-import goods from '../components/goods_list.vue'
 
 var win_print=ref(0)
 var win_goods=ref(0)

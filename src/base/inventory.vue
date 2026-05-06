@@ -1,3 +1,4 @@
+<!-- 库存盘点 -->
 <script setup lang="ts">
 import { ref } from 'vue'
 import print from '../components/print.vue'

@@ -1,3 +1,4 @@
+<!-- 药品养护 -->
 <script setup lang="ts">
 import { ref } from 'vue'
 import print from '../components/print.vue'
