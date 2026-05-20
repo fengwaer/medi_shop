@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted,nextTick, watch } from 'vue';
 
 interface Good {}
 
@@ -9,7 +9,7 @@ const emit = defineEmits<{ (e: 'select', row: Good): void }>();
 
 const list = ref<Good[]>([]);
 const localSch = ref(''); // 子组件内部维护的搜索词
-
+const sch = ref(null)
 
 // 核心查询逻辑
 const fetchData = async () => {
@@ -30,7 +30,8 @@ const fetchData = async () => {
         p.zycf AS [处方药标志],        
         p.splx AS [商品类型],             
         p.tsypflid AS [特殊药分类ID],
-        p.Py AS [拼音简码]
+        p.Py AS [拼音简码],
+        kc.pxid,kc.rkpcid
     FROM 
         D_PxKc kc
     INNER JOIN 
@@ -41,17 +42,51 @@ const fetchData = async () => {
         B_Sccj cj ON p.sccjId = cj.SccjId   
     WHERE 
         kc.qty > 0 AND
-        (p.pxno LIKE @k OR p.pxname LIKE @k OR p.barcode LIKE @k)
+        (p.pxno LIKE @k OR p.pxname LIKE @k OR p.barcode LIKE @k or p.py like @k)
     ORDER BY 
         pc.yxqFormat asc;`;
 
     // 传参改为对象形式，key 对应 SQL 里的 @k
     const params = { k: k }; 
     list.value = await db.query(sql, params);
+     nextTick(() => sch.value?.focus())
+}
+
+const sltIdx = ref(0)//当前选择
+//键盘事件
+const slt_keyup = (e:any) => {
+  if (list.value.length === 0) return
+
+  // 向下
+  if (e.key === 'ArrowDown') {
+    e.preventDefault()
+    sltIdx.value++
+    if (sltIdx.value >= list.value.length) {
+      sltIdx.value = 0
+    }
+  }
+
+  // 向上
+  else if (e.key === 'ArrowUp') {
+    e.preventDefault()
+    sltIdx.value--
+    if (sltIdx.value < 0) {
+      sltIdx.value = list.value.length - 1
+    }
+  }
+
+  // 回车确认
+  else if (e.key === 'Enter') {
+    e.preventDefault()
+    if (sltIdx.value >= 0 && sltIdx.value < list.value.length) {
+      emit('select', list.value[sltIdx.value])
+    }
+  }
 }
 
 onMounted(()=>{
   localSch.value=props.sch||'';
+   window.addEventListener('keydown', slt_keyup)
   fetchData()
 })
 </script>
@@ -59,7 +94,7 @@ onMounted(()=>{
 <template>
   <div class="list_wrap">
     <div class="inner_search">
-      <input v-model="localSch" @keyup.enter="fetchData" placeholder="输入货号/品名/条码..." class="sch_in">
+      <input ref="sch"  v-model="localSch" @keyup="fetchData" placeholder="输入货号/品名/条码..." class="sch_in">
     </div>
     <div class="table_box">
       <table class="list_table">
@@ -68,7 +103,7 @@ onMounted(()=>{
             <th width="60">零售价</th><th width="60">进价</th><th>有效期</th></tr>
         </thead>
         <tbody>
-          <tr v-for="g in list" :key="g.Id" @click="emit('select', g)" class="row">
+          <tr v-for="(g,idx) in list" :key="g.Id" @keyup.enter="emit('select', g)" @click="emit('select', g)" class="row" :class="{'slt':sltIdx==idx}">
             <td>{{g.货号}}</td><td>{{g.品名}}</td><td>{{g.规格}}</td><td>{{g.厂家}}</td><td>{{g.库存数量}}</td><td>{{g.单位}}</td>
             <td>{{g.零售价}}</td><td>{{g.进价}}</td><td>{{g.有效期}}</td>
           </tr>
@@ -89,9 +124,9 @@ onMounted(()=>{
   .table_box { flex: 1; overflow: auto; 
     .list_table {
       width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed;
-      th { position: sticky; top: 0;z-index: 3; padding: 8px; border: 1px solid #ddd; }
+      th { position: sticky; top: 0; padding: 8px; border: 1px solid #ddd; }
       td { padding: 6px; border: 1px solid #eee; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-      .row:hover { background: #e6f7ff; cursor: pointer; }
+      .slt{ background:#6bd; cursor: pointer; }
       .s_btn { background: #52c41a; color: #fff; border: none; padding: 2px 8px; cursor: pointer; border-radius: 2px; }
     }
   }

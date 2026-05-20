@@ -1,4 +1,4 @@
-<!-- 人员管理 -->
+<!-- 店员管理 -->
 <script setup lang="ts">
 import { ref } from 'vue'
 
@@ -11,7 +11,7 @@ const sch = ref('');
 
 <template>
   <div>
-   人员管理
+   店员管理
   </div>
   
   <div class="wait" v-if="win_goods">

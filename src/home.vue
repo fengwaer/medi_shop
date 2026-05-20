@@ -9,7 +9,7 @@ const menuItems = [
   { title: '药品养护', icon: 'ift-yh', color: '#faad14', path: '/maintenance', desc: '一般养护/重点养护' },
   { title: '库存盘点', icon: 'ift-pd', color: '#722ed1', path: '/inventory', desc: '实物盘点/损益处理' },
   { title: '会员管理', icon: 'ift-hy', color: '#eb2f96', path: '/member', desc: '档案管理/积分查询' },
-  { title: '人员管理', icon: 'ift-gl', color: '#13c2c2', path: '/staff', desc: '权限设置/账号管理' }
+  { title: '店员管理', icon: 'ift-gl', color: '#13c2c2', path: '/staff', desc: '权限设置/店员管理' }
 ];
 
 const navTo = (path: string) => {
